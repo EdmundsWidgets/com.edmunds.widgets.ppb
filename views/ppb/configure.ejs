@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title><%= title %></title>
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/glance/css/app.css">
+	<link rel="stylesheet" href="/libs/jquery-ui/themes/smoothness/jquery-ui.min.css">
+    <% if (portal) { %>
+    <link rel="stylesheet" href="/css/portal.css">
+    <% } %>
+</head>
+<body>
+
+<div id="main" class="container">
+    <% if (!portal) { %>
+    <div class="row">
+        <div class="span12">
+            <!-- <ul class="nav nav-pills pull-right">
+                <li><a href="/docs/carconfig" target="_blank">View API Documentation</a></li>
+            </ul> -->
+            <ul class="nav nav-pills pull-center">
+                <li class="active"><a href="/glance/configure">Widget</a></li>
+                <li><a href="/glance/configure/about">Quick Start</a></li>
+            </ul>
+        </div>
+    </div><!--./row -->
+    <% } %>
+    <div class="row">
+        <div class="span4">
+            <% include ../components/configurator/glance.ejs %>
+        </div>
+        <div class="span8">
+            <div id="message" class="alert hidden"></div>
+            <div id="widget-placeholder">
+                <i class="corner top left"></i>
+                <i class="corner top right"></i>
+                <i class="corner bottom left"></i>
+                <i class="corner bottom right"></i>
+            </div>
+        </div><!--./widget-placeholder -->
+
+    </div><!--./row -->
+</div><!--./container -->
+
+<% include instructions.ejs %>
+<% include snippets.ejs %>
+<% include ../layout/scripts.ejs %>
+<% include configure/scripts.ejs %>
+
+</body>
+</html>

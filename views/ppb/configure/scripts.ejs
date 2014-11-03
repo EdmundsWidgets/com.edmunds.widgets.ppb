@@ -1,0 +1,33 @@
+<script src="/libs/underscore/underscore.js"></script>
+<script src="/libs/backbone/backbone.js"></script>
+
+<script src="/libs/jquery-ui/ui/jquery.ui.core.js"></script>
+<script src="/libs/jquery-ui/ui/jquery.ui.widget.js"></script>
+<script src="/libs/jquery-ui/ui/jquery.ui.mouse.js"></script>
+<script src="/libs/jquery-ui/ui/jquery.ui.slider.js"></script>
+
+<script src="/js/plugins/edm-plugins-glance.js"></script>
+
+<script src="/libs/edmunds-sdk/dest/widget-sdk.min.js"></script>
+<script src="/loader-ppb.js"></script>
+<!--<script src="/libs/requirejs/require.js" data-main="/js/main.js"></script>-->
+<script src="/js/configurator/ppb.js"></script>
+
+<script>
+    AtGlanceConfigurator.ORIGIN = '<%= url %>';
+	var configurator = new AtGlanceConfigurator({
+		el: $('#widget-configurator')
+	});
+	configurator.reset();
+</script>
+
+<% if (debug === true) { %>
+<script>
+	$(function() {
+		var apiKey = 'axr2rtmnj63qsth3ume3tv5f';
+		$('#vehicle-api-key-input').on('dblclick', function() {
+			$(this).val(apiKey);
+		});
+	});
+</script>
+<% } %>
