@@ -33,18 +33,20 @@
             'click #widget-get': 'onSubmit',
             'reset': 'onReset',
             'valid #vehicle-api-key-control': 'onVehicleApiKeyChange',
-            'valid #zip-code-control': 'onZipCodeChange',
+//            'valid #zip-code-control': 'onZipCodeChange',
+            'valid #franchise-id-control':'onFranchiseIdChange',
             'change .makes': 'onSelectMake',
             'change .models': 'onSelectModel',
             'change .years': 'onSelectYear',
             'change #toggleAllTabs': 'onToggleAllTabs',
             'change .list-group-tabs [type="checkbox"]': 'onSelectTabs',
             'keyup #vehicle-api-key-input': 'onApplyApiKey',
-            'keyup #zip-code-input': 'onApplyZipCode',
-            'keypress #zip-code-input': 'zipCodeInputFilter',
+            //'keyup #zip-code-input': 'onApplyZipCode',
+            //'keypress #zip-code-input': 'zipCodeInputFilter',
             'paste #zip-code-input': 'zipCodeInputFilter',
             'click #vehicle-api-key-control [data-section="change"] .btn': 'onChangeClickKey',
-            'click #zip-code-control [data-section="change"] .btn': 'onChangeClickZip'
+//            'click #zip-code-control [data-section="change"] .btn': 'onChangeClickZip',
+            'click #franchise-id-control [data-section="change"] .btn': 'onChangeClickFranchiseId'
         },
         initialize: function() {
             this.$width = this.$('[name="width"]');
@@ -60,14 +62,15 @@
                 tooltipTitle: 'Please enter a valid API key',
                 validate: this.vehicleApiKeyValidator
             }).data('inputGroupControl');
-            this.zipCodeControl = this.$('#zip-code-control').inputGroupControl({
-                tooltipTitle: 'Please enter a valid ZIP code',
+            this.franchiseCodeControl = this.$('#franchise-id-control').inputGroupControl({
+                tooltipTitle: 'Please enter a valid franchise id',
                 disabled: true,
-                validate: this.zipCodeValidator
+                validate: this.franchiseIdCodeValidator
             }).data('inputGroupControl');
-            this.zipCodeControl.disable();
+            this.franchiseCodeControl.disable();
 
-            this.$('#zip-code-control div[data-section=change] .btn').on('click', $.proxy(this.zipCodeReset, this));
+            //this.$('#zip-code-control div[data-section=change] .btn').on('click', $.proxy(this.zipCodeReset, this));
+            this.$('#franchise-id-control div[data-section=change] .btn').on('click', $.proxy(this.franchiseIdReset, this));
             this.$('#vehicle-api-key-control div[data-section=change] .btn').on('click', $.proxy(this.zipCodeReset, this));
 
             this.widthSlider = this.createSlider(this.$widthSlider, widthSliderOptions, _.bind(this.onWidthChange, this));
@@ -79,7 +82,7 @@
 
         renderWidget: function () {
             this.options = this.toJSON();
-            if (this.year && this.year !== 'Select a Year' && this.make && this.make !== 'Select a Make' && this.model && this.model !== 'Select a Model' && global.tabsList && global.tabsList.length !== 0) {
+            if (this.year && this.year !== 'Select a Year' && this.make && this.make !== 'Select a Make' && this.model && this.model !== 'Select a Model') {
                 this.$widgetPlaceholder.find("#atglancewidget").remove();
                 this.$widgetPlaceholder.prepend('<div id="atglancewidget"></div>');
                 //this.loadingProgress();
@@ -99,12 +102,10 @@
                         model:     window.parent.model,
                         year:     window.parent.year,
                         submodel:   window.parent.submodel,
-                        zipCode: window.parent.zipCode,
-                        tabsList: window.parent.tabsList
+//                        zipCode: window.parent.franchaiseId
+                        franchaiseId: window.parent.franchaiseId
                     }
                 });
-//                this.$widgetPlaceholder.find("iframe").css('display','none');
-//                setTimeout(this.deleteLoading.bind(this),10000);
             } else {
                 this.loading();
                 return;
@@ -156,7 +157,8 @@
                 global.model = this.model;
                 global.year = this.year;
                 global.apiKey = this.vehicleApiKey;
-                global.zipCode = this.zipCode;
+//                global.zipCode = this.zipCode;
+                global.franchaiseId = this.franchaiseId;
                 this.renderWidget();
             }
         },
@@ -171,23 +173,20 @@
         },
         onVehicleApiKeyChange: function(event, apiKey) {
             this.vehicleApiKey = apiKey;
-            this.zipCodeControl.enable();
-            this.$('#zip-code-input').focus();
-            this.zipCodeControl.options.apiKey = apiKey;
-//            if(!this.zipCode){
-//                return;
-//            }
+            this.franchiseCodeControl.enable();
+            this.$('#franchise-id-input').focus();
+            this.franchiseCodeControl.options.apiKey = apiKey;
             this.findMakes();
             this.renderWidget();
         },
         onChangeClickKey: function(){
             this.vehicleApiKey = undefined;
         },
-        onChangeClickZip: function(){
-            this.zipCode = undefined;
+        onChangeClickFranchiseId: function(){
+            this.franchaiseId = undefined;
         },
-        onZipCodeChange: function (event, zipCode) {
-            this.zipCode = zipCode;
+        onFranchiseIdChange: function(event, value){
+            this.franchaiseId = value;
             if(!this.vehicleApiKey){
                 return;
             }
@@ -233,6 +232,19 @@
                 return false;
             }
         },
+        franchiseIdReset: function() {
+            this.$makesList.html('<option>List of Makes</option>');
+            this.$modelsList.html('<option>List of Models</option>');
+            this.$yearsList.html('<option>List of Years</option>');
+            this.$makesList.attr('disabled', 'disabled');
+            this.$modelsList.attr('disabled', 'disabled');
+            this.$yearsList.attr('disabled', 'disabled');
+            this.year = null;
+            this.make = null;
+            this.model = null;
+            this.submodel = null;
+            this.renderWidget();
+        },
         zipCodeReset: function() {
             this.$makesList.html('<option>List of Makes</option>');
             this.$modelsList.html('<option>List of Models</option>');
@@ -260,12 +272,43 @@
                 dataType: 'jsonp',
                 context: this,
                 success: function (response) {
+                    console.log(response[value]);
                     deferred[response[value] === 'true' ? 'resolveWith' : 'rejectWith'](this, [value]);
                 },
                 error: function () {
                     deferred.rejectWith(this, [value]);
                 }
             });
+            return deferred.promise();
+        },
+        franchiseIdCodeValidator: function(value) {
+            var deferred = new jQuery.Deferred(),
+                franchiseObj = {};
+            if (/[^[0-9]/.test(value)) {
+                deferred.rejectWith(this, [value]);
+                return deferred.promise();
+            }
+            jQuery.ajax({
+                url: 'http://api.edmunds.com/api/dealer/v2/franchises/' + value,
+                data: {
+                    api_key: this.options.apiKey
+                },
+                dataType: 'jsonp',
+                context: this,
+                success: function (response) {
+                    if(response.status === 'NOT_FOUND'){
+                        deferred.rejectWith(this, [value]);
+                    }else {
+                        franchiseObj = response;
+                        deferred.resolveWith(this, [value]);
+
+                    }
+                },
+                error: function () {
+                    deferred.rejectWith(this, [value]);
+                }
+            });
+            this.franchiseObj = franchiseObj;
             return deferred.promise();
         },
         onSelectMake: function (e) {
@@ -341,13 +384,15 @@
                 this.$widgetPlaceholder.find("#atglancewidget").html(loadingTemplate);
             }
             global.apiKey = this.vehicleApiKey;
-            global.zipCode = this.zipCode;
+            //global.zipCode = this.zipCode;
+            global.franchaiseId = this.franchaiseId;
             //this.renderWidget();
         },
         findMakes: function() {
-            if (!this.vehicleApiKey || !this.zipCode) {
+            if (!this.vehicleApiKey || !this.franchaiseId) {
                 return;
             }
+            console.log(this.vehicleApiKey, this.franchaiseId, this.franchiseObj);
             this.resetMakes();
             this.$makesList.html('<option>Loading makes...</option>');
             jQuery.ajax({
@@ -492,8 +537,8 @@
                 this.vehicleApiControl.$input.tooltip('show');
                 isValid = false;
             }
-            if (!this.zipCode) {
-                this.zipCodeControl.$input.tooltip('show');
+            if (!this.franchaiseId) {
+                this.franchiseCodeControl.$input.tooltip('show');
                 isValid = false;
             }
             if (!this.make || !this.model || !this.year || !this.tabsList) {
@@ -545,15 +590,15 @@
                     model:     window.parent.model,
                     year:     window.parent.year,
                     submodel:   window.parent.submodel,
-                    zipCode: window.parent.zipCode,
-                    tabsList: window.parent.tabsList
+                    franchaiseId: window.parent.franchaiseId
+                    //tabsList: window.parent.tabsList
                 }
             };
         },
 
         onReset: function () {
             this.resetMakes();
-            this.zipCodeControl.reset();
+            this.franchiseCodeControl.reset();
 
             this.widthSlider.option(widthSliderOptions);
 
@@ -570,7 +615,7 @@
             ];
 
             if (this.vehicleApiKey) {
-                this.zipCodeControl.enable();
+                this.franchiseCodeControl.enable();
                 this.$makesList.html('<option>List of Makes</option>').attr('disabled', 'disabled');
                 this.$modelsList.html('<option>List of Models</option>').attr('disabled', 'disabled');
                 this.$yearsList.html('<option>List of Years</option>').attr('disabled', 'disabled');
@@ -582,7 +627,8 @@
                 global.submodel = this.submodel;
                 global.year = this.year;
                 global.apiKey = this.vehicleApiKey;
-                global.zipCode = this.zipCode;
+                global.franchaiseId = this.franchaiseId;
+//                global.zipCode = this.zipCode;
                 global.tabsList = this.tabsList;
                 this.renderWidget();
             }
@@ -597,3 +643,5 @@
     });
     global.AtGlanceConfigurator = AtGlanceConfigurator;
 }(this));
+
+

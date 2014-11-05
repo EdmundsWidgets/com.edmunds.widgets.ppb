@@ -17,9 +17,10 @@ define('config', function() {
         apiKey:     window.widgetConfig.options.apiKey,
         make:     window.widgetConfig.options.make,
         model:     window.widgetConfig.options.model,
+        sub: window.widgetConfig.options.submodel,
         year:     window.widgetConfig.options.year,
-        zipCode: window.widgetConfig.options.zipCode,
-        tabsList: window.widgetConfig.options.tabsList
+        franchaiseId: window.widgetConfig.options.franchaiseId
+//        tabsList: window.widgetConfig.options.tabsList
     }
 });
 require([

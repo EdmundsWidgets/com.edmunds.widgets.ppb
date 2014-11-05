@@ -26,9 +26,16 @@ app.configure(function(){
     app.use(app.router);
     app.use(express.static(path.join(__dirname, 'public')));
     app.use('/libs', express.static(path.join(__dirname, 'bower_components')));
+    app.use(require('less-middleware')({
+        src: __dirname + '/src/ppb/less',
+        dest: __dirname + '/public/css',
+        prefix: '/css',
+        compress: true
+    }));
 });
 
-app.use('/ppb', express.static(path.join(__dirname, 'public/ppb')));
+//app.use('/ppb', express.static(path.join(__dirname, 'public/ppb')));
+app.use('/ppb', express.static(path.join(__dirname, 'src/ppb')));
 app.configure('development', function(){
     app.use(express.errorHandler());
 });
