@@ -35,6 +35,7 @@
             'valid #vehicle-api-key-control': 'onVehicleApiKeyChange',
 //            'valid #zip-code-control': 'onZipCodeChange',
             'valid #franchise-id-control':'onFranchiseIdChange',
+//            'valid #franchise-id-control':'getFranchObj',
             'change .makes': 'onSelectMake',
             'change .models': 'onSelectModel',
             'change .years': 'onSelectYear',
@@ -46,7 +47,7 @@
             'paste #zip-code-input': 'zipCodeInputFilter',
             'click #vehicle-api-key-control [data-section="change"] .btn': 'onChangeClickKey',
 //            'click #zip-code-control [data-section="change"] .btn': 'onChangeClickZip',
-            'click #franchise-id-control [data-section="change"] .btn': 'onChangeClickFranchiseId'
+            'click #franchise-id-control [data-section="change"] .btn': 'onChangeClickFranchiseId',
         },
         initialize: function() {
             this.$width = this.$('[name="width"]');
@@ -97,13 +98,13 @@
                         '/libs/requirejs/require.js" data-main="js/main.js'
                     ],
                     options: {
-                        apiKey:     window.parent.apiKey,
-                        make:     window.parent.make,
-                        model:     window.parent.model,
-                        year:     window.parent.year,
-                        submodel:   window.parent.submodel,
-//                        zipCode: window.parent.franchaiseId
-                        franchaiseId: window.parent.franchaiseId
+                        apiKey:     global.apiKey,
+                        make:     global.make,
+                        model:     global.model,
+                        year:     global.year,
+                        submodel:   global.submodel,
+                        franchaiseId: global.franchaiseId,
+                        locationId: global.franchiseObj.dealerId
                     }
                 });
             } else {
@@ -148,7 +149,6 @@
                 }
             }).data('ui-slider');
         },
-
         onWidthChange: function (value) {
             this.$width.val(value + 'px');
             this.$height.val(this.getWidgetHeight(value) + 'px');
@@ -258,32 +258,32 @@
             this.submodel = null;
             this.renderWidget();
         },
-        zipCodeValidator: function(value) {
-            var deferred = new jQuery.Deferred();
-            if (!/^\d{5}$/.test(value)) {
-                deferred.rejectWith(this, [value]);
-                return deferred.promise();
-            }
-            jQuery.ajax({
-                url: 'http://api.edmunds.com/v1/api/region/zip/validation/' + value,
-                data: {
-                    api_key: this.options.apiKey
-                },
-                dataType: 'jsonp',
-                context: this,
-                success: function (response) {
-                    console.log(response[value]);
-                    deferred[response[value] === 'true' ? 'resolveWith' : 'rejectWith'](this, [value]);
-                },
-                error: function () {
-                    deferred.rejectWith(this, [value]);
-                }
-            });
-            return deferred.promise();
-        },
+//        zipCodeValidator: function(value) {
+//            var deferred = new jQuery.Deferred();
+//            if (!/^\d{5}$/.test(value)) {
+//                deferred.rejectWith(this, [value]);
+//                return deferred.promise();
+//            }
+//            jQuery.ajax({
+//                url: 'http://api.edmunds.com/v1/api/region/zip/validation/' + value,
+//                data: {
+//                    api_key: this.options.apiKey
+//                },
+//                dataType: 'jsonp',
+//                context: this,
+//                success: function (response) {
+//                    console.log(response[value]);
+//                    deferred[response[value] === 'true' ? 'resolveWith' : 'rejectWith'](this, [value]);
+//                },
+//                error: function () {
+//                    deferred.rejectWith(this, [value]);
+//                }
+//            });
+//            return deferred.promise();
+//        },
         franchiseIdCodeValidator: function(value) {
             var deferred = new jQuery.Deferred(),
-                franchiseObj = {};
+                that = this;
             if (/[^[0-9]/.test(value)) {
                 deferred.rejectWith(this, [value]);
                 return deferred.promise();
@@ -299,16 +299,15 @@
                     if(response.status === 'NOT_FOUND'){
                         deferred.rejectWith(this, [value]);
                     }else {
-                        franchiseObj = response;
+                        //workaround
+                        global.franchiseObj = response;
                         deferred.resolveWith(this, [value]);
-
                     }
                 },
                 error: function () {
                     deferred.rejectWith(this, [value]);
                 }
             });
-            this.franchiseObj = franchiseObj;
             return deferred.promise();
         },
         onSelectMake: function (e) {
@@ -392,7 +391,6 @@
             if (!this.vehicleApiKey || !this.franchaiseId) {
                 return;
             }
-            console.log(this.vehicleApiKey, this.franchaiseId, this.franchiseObj);
             this.resetMakes();
             this.$makesList.html('<option>Loading makes...</option>');
             jQuery.ajax({
@@ -561,7 +559,7 @@
                 interpolate : /\{\{(.+?)\}\}/g
             };
             var template = this.htmlEntities([
-                    '<script type="text/javascript" src="' + AtGlanceConfigurator.ORIGIN + '/loader-glance.js"></script>\n',
+                    '<script type="text/javascript" src="' + AtGlanceConfigurator.ORIGIN + '/loader-ppb.js"></script>\n',
                     '<script type="text/javascript">\n' + $('#js-snippet-template').html() + '\n</script>'
             ].join(''));
             return _.template(template, {
@@ -585,13 +583,13 @@
                     "/libs/requirejs/require.js\" data-main=\""+ AtGlanceConfigurator.ORIGIN + "/ppb/js/main.js"
                 ],
                 options: {
-                    apiKey:     window.parent.apiKey,
-                    make:     window.parent.make,
-                    model:     window.parent.model,
-                    year:     window.parent.year,
-                    submodel:   window.parent.submodel,
-                    franchaiseId: window.parent.franchaiseId
-                    //tabsList: window.parent.tabsList
+                    apiKey:     global.apiKey,
+                    make:     global.make,
+                    model:     global.model,
+                    year:     global.year,
+                    submodel:   global.submodel,
+                    franchaiseId: global.franchaiseId,
+                    locationId: global.franchiseObj.dealerId
                 }
             };
         },

@@ -19,8 +19,8 @@ define('config', function() {
         model:     window.widgetConfig.options.model,
         sub: window.widgetConfig.options.submodel,
         year:     window.widgetConfig.options.year,
-        franchaiseId: window.widgetConfig.options.franchaiseId
-//        tabsList: window.widgetConfig.options.tabsList
+        franchaiseId: window.widgetConfig.options.franchaiseId,
+        locationId: window.widgetConfig.options.locationId
     }
 });
 require([

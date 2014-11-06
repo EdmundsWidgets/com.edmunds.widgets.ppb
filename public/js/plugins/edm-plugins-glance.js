@@ -62,7 +62,6 @@
         },
 
         validate: function(value) {
-            console.log(value);
             var deferred = new $.Deferred();
             if (value.length > 0) {
                 deferred.resolveWith(this, [value]);
