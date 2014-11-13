@@ -163,18 +163,19 @@ function getThemeStyleUrl(options) {
 }
 
 function getAdditionalStyleUrl(widget, options) {
-    if (widget === 'nvc') {
-        return '/nvc/api/less?' + [
-                'style[theme]=' + (options.theme || 'simple'),
-                'style[colorScheme]=' + (options.colorScheme || options.color || 'light'),
-                'variables[width]=' + (options.width + 'px'),
-                'variables[height]=' + (options.height + 'px'),
-                'variables[borderWidth]=' + (options.border || '1px'),
-                'variables[borderRadius]=' + (options.borderRadius || '5px')
-        ].join('&');
-    } else {
-        return '/ppb/css/main.css';
-    }
+    console.log(widget, options);
+//    if (widget === 'nvc') {
+//        return '/nvc/api/less?' + [
+//                'style[theme]=' + (options.theme || 'simple'),
+//                'style[colorScheme]=' + (options.colorScheme || options.color || 'light'),
+//                'variables[width]=' + (options.width + 'px'),
+//                'variables[height]=' + (options.height + 'px'),
+//                'variables[borderWidth]=' + (options.border || '1px'),
+//                'variables[borderRadius]=' + (options.borderRadius || '5px')
+//        ].join('&');
+//    } else {
+        return '/ppb/css/main' + '-' + options.color + '.css';
+//    }
 }
 
 function map(array) {

@@ -15,12 +15,10 @@ requirejs.config({
 define('config', function() {
     return {
         apiKey:     window.widgetConfig.options.apiKey,
-        make:     window.widgetConfig.options.make,
-        model:     window.widgetConfig.options.model,
-        sub: window.widgetConfig.options.submodel,
-        year:     window.widgetConfig.options.year,
         franchaiseId: window.widgetConfig.options.franchaiseId,
-        locationId: window.widgetConfig.options.locationId
+        locationId: window.widgetConfig.options.locationId,
+        vin: window.widgetConfig.options.vin,
+        zipCode: window.widgetConfig.options.zipCode
     }
 });
 require([
