@@ -2,23 +2,26 @@
  * Created by Ivan_Kauryshchanka on 11/13/2014.
  */
 define([
+    'jquery',
     'config',
     'backbone',
     'dispatcher',
     'template/button/button',
     'model/button/button'
-], function(config,Backbone, dispatcher, buttonTemplate, buttonModel) {
+], function($,config, Backbone, dispatcher, buttonTemplate, buttonModel) {
     return Backbone.View.extend({
         events: {
           'click .price-button': 'buttonClick'
         },
         model: new buttonModel(),
         initialize: function (options) {
+            this.listenTo(dispatcher, 'getObject', this.getInventoryObj);
+            this.listenTo(this.model, 'sync', this.init);
             this.render();
         },
         render: function () {
-            this.getInventoryObj();
             this.$el.html(buttonTemplate);
+            dispatcher.trigger('getObject');
             return this;
         },
         getInventoryObj : function(){
@@ -28,10 +31,7 @@ define([
                 url: this.model.url(vin, zip),
                 dataType: 'json',
                 data: {
-                    access_token: ''
-                },
-                success:function(response){
-
+                    access_token: '55qfx57kneuxagw6ptsrsk6q'
                 },
                 error: function(err, data){
                     if(err){
@@ -41,8 +41,14 @@ define([
             });
             return this;
         },
+        init: function(){
+            if(this.model.toJSON().resultsList[0].franchiseId !== config.franchaiseId){
+                this.$('.price-button').prop('disabled', 'disabled');
+            }
+        },
         buttonClick: function(e){
             e.preventDefault();
+
             var franchiseId = this.model.toJSON().resultsList[0].franchiseId,
                 locationId = this.model.toJSON().resultsList[0].dealerLocationId,
                 inventoryId = this.model.toJSON().resultsList[0].inventoryId,
@@ -55,5 +61,5 @@ define([
         }
 
     });
-
+//    || this.model.toJSON().resultsList[0].guaranteedPrice == 'N/A'
 });

@@ -192,7 +192,70 @@ var dealerOAuth = new function() {
 	};
 		
 };
+var oAuth = function(){
+    var HOST = 'api.edmunds.com';
 
+    var API_KEY = 'axr2rtmnj63qsth3ume3tv5f';
+
+    var SHARED_SECRET = 'pTkHFXQEzn4ayn792CKuVW2E';
+
+    var TOKEN_PATH = '/inventory/token';
+
+    this.accessToken = function(onSuccess, onFail) {
+        var options = {
+                host : HOST,
+                path : TOKEN_PATH,
+                method : 'POST',
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                }
+            },
+            clientData = 'client_id=' + API_KEY + '&client_secret=' + SHARED_SECRET + '&grant_type=client_credentials';
+        function handleError(error) {
+            onFail({
+                errorType: 'OAUTH_ACCESS_TOKEN_ERROR',
+                message: error
+            });
+        }
+        function getToken(data) {
+            var token;
+            try {
+                token = JSON.parse(data);
+                if(token && token.access_token) {
+                    console.log(token);
+                    onSuccess(token.access_token);
+                } else {
+                    handleError(token && token.error ? token.error : 'OAuth access token is missing');
+                }
+            } catch(e) {
+                handleError('Invalid data: ' + data);
+                console.log('problem with parsing access_token data:' + e);
+            }
+
+        }
+        httpRequest(options, clientData, getToken, handleError);
+    };
+
+    this.get = function(path, query, onSuccess, onFail) {
+        function oAuthQuery(accessToken) {
+            var options = {
+                host : HOST,
+                path : path + '?' + query,
+                headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded',
+                    'Authorization' : 'Bearer ' + accessToken
+                }
+            };
+            httpRequest(options, null, onSuccess, function(error) {
+                onFail({
+                    errorType: 'OAUTH_REQUEST_ERROR',
+                    message: error
+                });
+            });
+        }
+        this.accessToken(oAuthQuery, onFail);
+    };
+};
 exports.keyValidate = function(request, response) {
     var callbackName = request.query.callback,
     	serviceName = request.query.service,
@@ -222,4 +285,18 @@ exports.sendLead = function(request, response) {
 		response.end(callbackName ? callbackName + '(' + errorStr + ')' : errorStr);
 	}
     dealerOAuth.get('/api/dealer/v2/lead', queryString, onSuccess, onError);
+};
+exports.sendToken = function(request, response){
+    var callbackName = request.query.callback,
+        queryString = request.url.split('?')[1] || '';
+    function onSuccess(data, status) {
+        response.statusCode = status;
+        response.end(data);
+    }
+    function onError(error) {
+        response.statusCode = 400;
+        var errorStr = JSON.stringify(error);
+        response.end(callbackName ? callbackName + '(' + errorStr + ')' : errorStr);
+    }
+    oAuth.get('/api/inventory/v1/lookup', queryString, onSuccess, onError);
 };

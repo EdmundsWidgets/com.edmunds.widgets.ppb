@@ -4,8 +4,8 @@ define([
     'dispatcher',
     'template/base/base-button',
     'view/button/button',
-    'GoogleAnalytics'
-], function($, Backbone, dispatcher, baseButtonTemplate, buttonView, GoogleAnalytics) {
+    'GoogleAnalytics',
+], function($, Backbone, dispatcher,baseButtonTemplate, buttonView, GoogleAnalytics) {
     return Backbone.View.extend({
         className: 'edm-widget',
         subscriber: window.widgetSubscriber || {},

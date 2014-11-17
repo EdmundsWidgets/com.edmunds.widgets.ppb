@@ -1,6 +1,7 @@
 (function(global) {
     "use strict";
     var widthSliderOptions = {
+
         min: 250,
         max: 970,
         value: 250
@@ -239,9 +240,9 @@
         validateVin: function(){
             var value = this.$inputVin.val();
             if (vinValidate.validVin(value)){
-                this.vin = value;
+                this.vin = global.vin = value;
             }else {
-                this.vin = 'please enter VIN here';
+                this.vin = global.vin = 'please enter VIN here';
             }
         },
         vin: function(value){

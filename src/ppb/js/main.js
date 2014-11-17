@@ -9,7 +9,7 @@ requirejs.config({
     shim: {
         'bootstrap': {
             deps: ['jquery']
-        }
+        },
     }
 });
 define('config', function() {
