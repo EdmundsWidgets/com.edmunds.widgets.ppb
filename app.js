@@ -48,7 +48,7 @@ app.get('/ppb/configure/about', routes.ppb.about);
 app.get('/api/keyvalidate', masheryApi.keyValidate);
 
 app.get('/dealer/sendlead', masheryApi.sendLead);
-app.get('/inventory/token', masheryApi.sendToken);
+app.get('/v1/lookup', masheryApi.sendToken);
 
 app.get('/loader-ppb.js', function(req, res) {
     res.setHeader('Content-Type', 'text/javascript');

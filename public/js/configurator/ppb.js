@@ -18,13 +18,15 @@
             'click #widget-get': 'onSubmit',
             'reset': 'onReset',
             'valid #vehicle-api-key-control': 'onVehicleApiKeyChange',
-            'valid #franchise-id-control':'onFranchiseIdChange',
+            'valid #zip-code-control': 'onZipCodeChange',
             'valid #vin-code-control':'onVinKeyChange',
             'keyup #vehicle-api-key-input': 'onApplyApiKey',
+            'keyup #zip-code-input': 'onApplyZipCode',
+            'keypress #zip-code-input': 'zipCodeInputFilter',
             'paste #zip-code-input': 'zipCodeInputFilter',
             'click #vehicle-api-key-control [data-section="change"] .btn': 'onChangeClickKey',
-            'click #franchise-id-control [data-section="change"] .btn': 'onChangeClickFranchiseId',
-            'click #vin-code-control [data-section="change"] .btn': 'onChangeClickVinKey'
+            'click #vin-code-control [data-section="change"] .btn': 'onChangeClickVinKey',
+            'click #zip-code-control [data-section="change"] .btn': 'onChangeClickZip'
         },
         initialize: function() {
             var me = this;
@@ -36,20 +38,18 @@
                 tooltipTitle: 'Please enter a valid API key',
                 validate: this.vehicleApiKeyValidator
             }).data('inputGroupControl');
-            this.franchiseCodeControl = this.$('#franchise-id-control').inputGroupControl({
-                tooltipTitle: 'Please enter a valid franchise id',
-                disabled: true,
-                validate: this.franchiseIdCodeValidator
-            }).data('inputGroupControl');
             this.vinCodeControl = this.$('#vin-code-control').inputGroupControl({
                 tooltipTitle: 'Please enter a valid VIN code',
                 disabled: true,
                 validate: this.vin
             }).data('inputGroupControl');
             this.vinCodeControl.disable();
-            this.franchiseCodeControl.disable();
-
-            this.$('#franchise-id-control div[data-section=change] .btn').on('click', $.proxy(this.franchiseIdReset, this));
+            this.zipCodeControl = this.$('#zip-code-control').inputGroupControl({
+                tooltipTitle: 'Please enter a valid ZIP code',
+                disabled: true,
+                validate: this.zipCodeValidator
+            }).data('inputGroupControl');
+            this.zipCodeControl.disable();
             this.$('#vehicle-api-key-control div[data-section=change] .btn').on('click', $.proxy(this.zipCodeReset, this));
             this.$('#option_colorscheme')
                 .radioGroup({
@@ -72,7 +72,7 @@
 
         renderWidget: function () {
             this.options = this.toJSON();
-            if(this.vehicleApiKey && this.franchaiseId && this.vin !== "please enter VIN here" && this.vin !== undefined){
+            if(this.vehicleApiKey && this.zipCode && this.vin !== "please enter VIN here" && this.vin !== undefined){
                 this.$widgetPlaceholder.find("#atglancewidget").remove();
                 this.$widgetPlaceholder.prepend('<div id="atglancewidget"></div>');
                 this.widget = EDM.createWidget({
@@ -89,9 +89,7 @@
                     options: {
                         apiKey: global.apiKey,
                         vin: global.vin,
-                        franchaiseId: global.franchaiseId,
-                        locationId: global.franchiseObj.dealerId,
-                        zipCode: global.franchiseObj.address.zipcode
+                        zipCode:  global.zipCode
                     }
                 });
             }else {
@@ -138,14 +136,15 @@
         onWidthChange: function (value) {
             this.$width.val(value + 'px');
             this.$height.val(100 + 'px');
+            global.zipCode = this.zipCode;
             this.renderWidget();
         },
         onVehicleApiKeyChange: function(event, apiKey) {
             this.vehicleApiKey = apiKey;
             global.apiKey = this.vehicleApiKey;
-            this.franchiseCodeControl.enable();
+            this.zipCodeControl.enable();
             this.$('#franchise-id-input').focus();
-            this.franchiseCodeControl.options.apiKey = apiKey;
+            this.zipCodeControl.options.apiKey = apiKey;
         },
         onChangeClass: function(event){
            var current = event.currentTarget;
@@ -160,22 +159,6 @@
         },
         onChangeClickVinKey: function(){
             //this.vinKey = undefined;
-        },
-        onChangeClickFranchiseId: function(){
-            this.franchaiseId = undefined;
-            global.vin = undefined;
-        },
-        onFranchiseIdChange: function(event, value){
-            this.franchaiseId = value;
-            global.franchaiseId = this.franchaiseId;
-            this.vinCodeControl.enable();
-            this.$('#vin-code-input').focus();
-            if(!this.vehicleApiKey){
-                return;
-            };
-            global.vin = this.vin;
-            console.log(this.vin);
-            this.renderWidget();
         },
         onVinKeyChange: function(event, value){
             this.vin = value;
@@ -206,37 +189,6 @@
             });
             return deferred.promise();
         },
-        franchiseIdReset: function() {
-            this.franchaiseId = undefined;
-        },
-        franchiseIdCodeValidator: function(value) {
-            var deferred = new jQuery.Deferred();
-            if (/[^[0-9]/.test(value) || !value) {
-                deferred.rejectWith(this, [value]);
-                return deferred.promise();
-            }
-            jQuery.ajax({
-                url: 'http://api.edmunds.com/api/dealer/v2/franchises/' + value,
-                data: {
-                    api_key: this.options.apiKey
-                },
-                dataType: 'jsonp',
-                context: this,
-                success: function (response) {
-                    if(response.status === 'NOT_FOUND'){
-                        deferred.rejectWith(this, [value]);
-                    }else {
-                        //workaround
-                        global.franchiseObj = response;
-                        deferred.resolveWith(this, [value]);
-                    }
-                },
-                error: function () {
-                    deferred.rejectWith(this, [value]);
-                }
-            });
-            return deferred.promise();
-        },
         validateVin: function(){
             var value = this.$inputVin.val();
             if (vinValidate.validVin(value)){
@@ -249,6 +201,64 @@
            var deferred = new jQuery.Deferred();
                deferred.resolveWith(this, [value]);
            return deferred.promise();
+        },
+        onZipCodeChange: function (event, zipCode) {
+            this.zipCode = zipCode;
+            global.zipCode = this.zipCode;
+            if(!this.vehicleApiKey){
+                return;
+            }
+            this.vinCodeControl.enable();
+            this.renderWidget();
+        },
+        onApplyZipCode: function(e) {
+            if (e.keyCode == 13) {
+                $("#zip-code-apply").click();
+            }
+        },
+        zipCodeInputFilter: function (e) {
+            var code = e.keyCode || e.which,
+                convertKeyCode = String.fromCharCode(code),
+                regExp = /[0-9]/;
+
+            // Firefox fix. Prevent disable the backspace key.
+            // note: Need to prevent disable all functional keys like delete, control, alt etc.
+            if (code === 8) {
+                return;
+            }
+
+            if (!regExp.test(convertKeyCode)) {
+                e.preventDefault();
+                return false;
+            }
+        },
+        onChangeClickZip: function(){
+            this.zipCode = undefined;
+        },
+        zipCodeValidator: function(value) {
+            var deferred = new jQuery.Deferred();
+            if (!/^\d{5}$/.test(value)) {
+                deferred.rejectWith(this, [value]);
+                return deferred.promise();
+            }
+            jQuery.ajax({
+                url: 'http://api.edmunds.com/v1/api/region/zip/validation/' + value,
+                data: {
+                    api_key: this.options.apiKey
+                },
+                dataType: 'jsonp',
+                context: this,
+                success: function (response) {
+                    deferred[response[value] === 'true' ? 'resolveWith' : 'rejectWith'](this, [value]);
+                },
+                error: function () {
+                    deferred.rejectWith(this, [value]);
+                }
+            });
+            return deferred.promise();
+        },
+        zipCodeReset: function() {
+            this.renderWidget();
         },
         onApplyApiKey: function(e) {
             if (e.keyCode == 13) {
@@ -269,8 +279,8 @@
                 this.vehicleApiControl.$input.tooltip('show');
                 isValid = false;
             }
-            if (!this.franchaiseId) {
-                this.franchiseCodeControl.$input.tooltip('show');
+            if (!this.zipCode) {
+                this.zipCodeControl.$input.tooltip('show');
                 isValid = false;
             }
             if (isValid) {
@@ -315,61 +325,21 @@
                 ],
                 options: {
                     apiKey: global.apiKey,
-                    franchaiseId: global.franchaiseId,
-                    locationId: global.franchiseObj.dealerId,
-                    zipCode: global.franchiseObj.address.zipcode,
-                    vin: global.vin
+                    vin: global.vin,
+                    zipCode:  global.zipCode
                 }
             };
         },
-//        getInventoryObj : function(){
-//            var vin = global.vin,
-//                zip = global.franchiseObj.address.zipcode,
-//                that = this;
-//            jQuery.ajax({
-//                url: 'http://api.edmunds.com/api/inventory/v1/lookup?vin='+ vin +'&zipcode='+ zip +'&range=50',
-//                dataType: 'json',
-//                data: {
-//                    access_token: 'bdn6hgycbzk33ertkkvvurfw'
-//                },
-//                crossDomain: true,
-//                context: this,
-//                success: function (response) {
-//                    that.callback(response);
-//                },
-//                error: function () {
-//                }
-//            });
-//        },
-
         onReset: function () {
-            this.franchiseCodeControl.reset();
             this.vehicleApiControl.reset();
             this.vinCodeControl.reset();
+            this.zipCodeControl.reset();
+            if (this.vehicleApiKey) {
+                this.zipCodeControl.enable();
+            }
             this.widthSlider.option(widthSliderOptions);
             global.apiKey = undefined;
-            global.franchaiseId = undefined;
             this.vin = undefined;
-            global.franchiseObj = {};
-//            if (this.vehicleApiKey) {
-//                this.franchiseCodeControl.enable();
-//                this.$makesList.html('<option>List of Makes</option>').attr('disabled', 'disabled');
-//                this.$modelsList.html('<option>List of Models</option>').attr('disabled', 'disabled');
-//                this.$yearsList.html('<option>List of Years</option>').attr('disabled', 'disabled');
-//            }
-
-//            if (global.year) {
-//                global.make = this.make;
-//                global.model = this.model;
-//                global.submodel = this.submodel;
-//                global.year = this.year;
-//                global.apiKey = this.vehicleApiKey;
-//                global.franchaiseId = this.franchaiseId;
-////                global.zipCode = this.zipCode;
-//                global.tabsList = this.tabsList;
-//                this.renderWidget();
-//            }
-
             this.widget = null;
             this.renderWidget();
         },

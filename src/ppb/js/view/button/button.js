@@ -31,7 +31,7 @@ define([
                 url: this.model.url(vin, zip),
                 dataType: 'json',
                 data: {
-                    access_token: '55qfx57kneuxagw6ptsrsk6q'
+                    access_token: ''
                 },
                 error: function(err, data){
                     if(err){
@@ -42,9 +42,10 @@ define([
             return this;
         },
         init: function(){
-            if(this.model.toJSON().resultsList[0].franchiseId !== config.franchaiseId){
-                this.$('.price-button').prop('disabled', 'disabled');
+            if(this.model.toJSON().resultsList[0].guaranteedPrice == 'N/A'){
+                this.$('.price-button').addClass('hidden');
             }
+            console.log(this.model.toJSON());
         },
         buttonClick: function(e){
             e.preventDefault();
@@ -61,5 +62,5 @@ define([
         }
 
     });
-//    || this.model.toJSON().resultsList[0].guaranteedPrice == 'N/A'
+//
 });
