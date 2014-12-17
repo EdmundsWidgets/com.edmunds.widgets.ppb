@@ -7,8 +7,8 @@ define([
     'backbone'
 ], function($, _, Backbone) {
     return Backbone.Model.extend({
-        url: function(vin, zip) {
-            return 'http://api.edmunds.com/api/inventory/v1/lookup?vin='+ vin +'&zipcode='+ zip + '&range=50';
+        url: function() {
+
         }
     });
 });

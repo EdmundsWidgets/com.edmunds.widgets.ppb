@@ -22,7 +22,7 @@
     </div><!--./row -->
     <div class="row">
 
-        <h2>Edmunds At A Glance Widget Quick Start</h2>
+        <h2>Edmunds Price Promise Widget Quick Start</h2>
         <hr class="bs-docs-separator">
         <ul>
             <li><a href="#Get_Widget_Code">Get Widget Code</a></li>
@@ -39,10 +39,7 @@
         <ul>
             <li><p><code>API Key</code> - the Key for Edmunds API registered on <a href="http://developer.edmunds.com" target="_blank">Edmunds Developer Portal</a>.</p></li>
             <li><p><code>Default Zip Code</code> - the zip code to display by default in ZIP field.</p></li>
-            <li><p><code>List of Makes</code> - List of makes</p></li>
-            <li><p><code>List of Models</code> - List of models</p></li>
-            <li><p><code>List of Years</code> - List of years</p></li>
-            <li><p><code>Included Tabs</code> - the set of Tabs to display in the Widget.</p></li>
+            <li><p><code>VIN code</code> - car's vin code </p></li>
             <li><p><code>Width</code> - sets the width of the Widget.</p></li>
             <li><p><code>Get Code</code> - instructions to embed Edmunds At A Glance Widget on your page.</p></li>
         </ul>
@@ -50,12 +47,12 @@
         <hr class="bs-docs-separator">
 
         <h3><a name="How_to_Embed_Widget"></a>How to Embed Widget</h3>
-        <p>To embed Edmunds At A Glance Widget on your page just follow the instructions from <code>Get Code</code> popup.</p>
+        <p>To embed Edmunds Price Promise Widget on your page just follow the instructions from <code>Get Code</code> popup.</p>
         <h4>Example scenario:</h4>
         <ol>
             <li>
                 <p>Insert the empty div to your page:</p>
-                <pre>&lt;div id="atglancewidget"&gt;&lt;/div&gt;</pre>
+                <pre>&lt;div id="ppb-&lt;vin will add here automatically&gt;"&gt;&lt;/div&gt;</pre>
             </li>
             <li>
                 <p>Add the following JavaScript snippet to your page:</p>
@@ -64,29 +61,19 @@
 &lt;script type="text/javascript"&gt;
 (function(){
 var widget = EDM.createWidget({
-    "type": "glance",
-    "renderTo": "atglancewidget",
+    "type": "ppb",
+    "renderTo": "ppb-&lt;vin will add here automatically&gt;",
     "style": {
         "width": "250",
         "height": "630"
     },
     "scripts": [
-        "/libs/requirejs/require.js\" data-main=\"http://widgets.edmunds.com/glance/js/main.js"
+        "/libs/requirejs/require.js\" data-main=\"http://widgets.edmunds.com/ppb/js/main.js"
     ],
     "options": {
-        "apiKey": "axr2rtmnj63qsth3ume3tv5f",
-        "make": "acura",
-        "model": "ilx",
-        "year": "2013",
-        "submodel": "sedan",
-        "zipCode": "12345",
-        "tabsList": [
-            "rating-tab",
-            "edmunds-says-tab",
-            "consumer-reviews-tab",
-            "tco-tab",
-            "photos-tab"
-        ]
+        "apiKey": &lt;api key&gt;
+        "vin": &lt;car's vin&gt;,
+        "zipCode": "90404"
     }
 });
 }());
@@ -98,7 +85,7 @@ var widget = EDM.createWidget({
         <hr class="bs-docs-separator">
 
         <h3><a name="Widget_Custom_Events"></a>Widget Custom Events</h3>
-        <p>Edmunds At A Glance Widget provides the next method for subscription to the widget events:</p>
+        <p>Edmunds Price Promise Widget provides the next method for subscription to the widget events:</p>
         <br>
         <p><code>on()</code> - Binds a callback function to the widget object. The callback will be invoked whenever the event is fired.</p>
         <pre>
@@ -106,25 +93,19 @@ var widget = EDM.createWidget({
 
     // create instance of the widget
     var widget = EDM.createWidget(/* configured options here */);
-
-    // subscribe to the event
-    widget.on('vehicle.style.select', function(styleId, styleName) {
-        console.log(styleName + ' was selected.');
-    });
-
 }());</pre>
-        <p><code>event_name</code> - this is one event of the widget. All list of <a href="#Events_List">events</a> is below.</p>
+        <!--<p><code>event_name</code> - this is one event of the widget. All list of <a href="#Events_List">events</a> is below.</p>-->
 
-        <div class="alert alert-info">
-            <p>This method is very useful if you would use Google Analytics or another tracking system for the widget. For example:</p>
-            <pre>
-// subscribe to the event
-widget.on('vehicle.style.select', function(styleId, styleName) {
-    _gaq.push(['_trackEvent', 'Edmunds At Glance Widget', 'Select a Style', styleName]);
-});
-            </pre>
-            <p>Where <code>_gaq</code> is an instance of Google Analytics in your page.</p>
-        </div>
+        <!--<div class="alert alert-info">-->
+            <!--<p>This method is very useful if you would use Google Analytics or another tracking system for the widget. For example:</p>-->
+            <!--<pre>-->
+<!--// subscribe to the event-->
+<!--widget.on('vehicle.style.select', function(styleId, styleName) {-->
+    <!--_gaq.push(['_trackEvent', 'Edmunds Price Promise Widget', 'Select a Style', styleName]);-->
+<!--});-->
+            <!--</pre>-->
+            <!--<p>Where <code>_gaq</code> is an instance of Google Analytics in your page.</p>-->
+        <!--</div>-->
 
         <hr class="bs-docs-separator">
         <h3><a name="Events_List"></a>Events List</h3>
@@ -149,29 +130,9 @@ widget.on('vehicle.style.select', function(styleId, styleName) {
                     <td>This event is fired when zip code is updated.</td>
                 </tr>
                 <tr>
-                    <td>tab.click</td>
-                    <td><span class="label">tabName</span></td>
-                    <td>This event is fired when navigation tab is clicked.</td>
-                </tr>
-                <tr>
-                    <td>photos.type.click</td>
-                    <td><span class="label">photosType</span></td>
-                    <td>This event is fired when photos type is changed.</td>
-                </tr>
-                <tr>
-                    <td>next.review.click</td>
-                    <td>Has no params</td>
-                    <td>This event is fired when next navigation button on the Consumer Reviews tab is clicked.</td>
-                </tr>
-                <tr>
-                    <td>prev.review.click</td>
-                    <td>Has no params</td>
-                    <td>This event is fired when previous navigation button on the Consumer Reviews tab is clicked.</td>
-                </tr>
-                <tr>
-                    <td>list.review.click</td>
-                    <td>Has no params</td>
-                    <td>This event is fired when full list of reviews button on the Consumer Reviews tab is clicked.</td>
+                    <td>vin.update</td>
+                    <td><span class="label">vinCode</span></td>
+                    <td>This event is fired when vin code is updated.</td>
                 </tr>
             </tbody>
         </table>

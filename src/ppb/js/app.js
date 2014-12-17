@@ -13,9 +13,9 @@ define([
 
         },
         initialize: function() {
+
             GoogleAnalytics.init();
             GoogleAnalytics.track(dispatcher);
-
             _.each(this.subscriber._deferredEvents, function(event) {
                 dispatcher.on(event.name, event.callback, event.context);
             });

@@ -250,7 +250,7 @@ td, th{
     }
 
     /*.label{*/
-        /*border: 1px solid #000*/
+    /*border: 1px solid #000*/
     /*}*/
 
     .table{
@@ -4423,7 +4423,9 @@ textarea.input-group-sm > .form-control, textarea.input-group-sm > .input-group-
     background-color: #2b2b2b;
     color: #fff
 }
+@media (max-width: 450px){
 
+}
 @media (max-width: 767px){
     .navbar-inverse .navbar-nav .open .dropdown-menu > .dropdown-header{
         border-color: #2b2b2b
@@ -4607,6 +4609,7 @@ textarea.input-group-sm > .form-control, textarea.input-group-sm > .input-group-
 }
 
 .label{
+    cursor: default;
     display: inline;
     padding: .2em .6em .3em;
     font-size: 75%;
@@ -5664,11 +5667,13 @@ button.close{
     padding: 0 5px
 }
 #zip-code-control .tooltip-inner,
+#vin-code-control .tooltip-inner,
 #vehicle-api-key-control .tooltip-inner,
 .tooltip-container + .tooltip .tooltip-inner{
     background-color: #c13840;
 }
 #zip-code-control .tooltip.bottom .tooltip-arrow,
+#vin-code-control .tooltip.bottom .tooltip-arrow,
 #vehicle-api-key-control .tooltip.bottom .tooltip-arrow
 {
     border-bottom-color: #c13840;
@@ -6493,21 +6498,13 @@ body{
     width: 200px
 }
 
-#widget-placeholder{
-    background: white;
-    border: 1px dashed #ccc;
-    float: left;
-    padding: 30px;
-    position: relative
-}
-
 /*dark theme*/
 
 #widget-placeholder.dark {
     background: #404041;
 }
 #widget-placeholder.dark #prise-promise-button-disabled .logo{
-    background-image: url("../img/edmunds-logo-dark.png");
+    background-image: url("../img/edmunds-pp-white.svg");
 }
 #widget-placeholder.dark #prise-promise-button-disabled .red,
 #widget-placeholder.dark #prise-promise-button-disabled .blue {
@@ -6517,11 +6514,16 @@ body{
     color: #fff !important;
     left: -5px;
 }
+
+#widget-placeholder #ppb {
+    /*display: inline-block;*/
+}
 /*----------*/
 
 
 #widget-placeholder #prise-promise-button-disabled {
     text-align: center;
+    display: inline-block;
 }
 #widget-placeholder #prise-promise-button-disabled .price-button {
     text-align: center;
@@ -6539,14 +6541,15 @@ body{
 }
 #widget-placeholder #prise-promise-button-disabled .logo {
     display: inline-block;
-    width: 100px;
+    /*width: 223px;*/
     vertical-align: bottom;
-    margin-right: 6px;
-    background-image: url("../img/edmunds-logo.png");
+    /*margin-right: 6px;*/
+    background-image: url("../img/edmunds-pp-color.svg");
     background-repeat: no-repeat;
-    height: 33px;
-    background-size: contain;
-
+    height: 29px;
+    background-size: 131%;
+    background-position: 50% 50%;
+    width: 16em;
 }
 #widget-placeholder #prise-promise-button-disabled .logo img {
     max-width: 100%;
@@ -6570,6 +6573,18 @@ body{
     left: -5px;
 }
 
+
+
+
+#widget-placeholder{
+    background: white;
+    border: 1px dashed #ccc;
+    float: left;
+    padding: 22px 30px;
+    position: relative;
+    box-sizing: border-box;
+    text-align: center;
+}
 
 
 
@@ -6631,6 +6646,7 @@ body{
     top: 40%;
     width: 90px
 }
+
 
 #widget-placeholder .dot-1, #widget-placeholder .dot-2, #widget-placeholder .dot-3, #widget-placeholder .dot-4, #widget-placeholder .dot-5{
     height: 10px;
@@ -6771,3 +6787,4 @@ body{
         transform: scale(1, 1)
     }
 }
+

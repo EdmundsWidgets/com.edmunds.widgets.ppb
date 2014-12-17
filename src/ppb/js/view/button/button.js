@@ -14,53 +14,101 @@ define([
           'click .price-button': 'buttonClick'
         },
         model: new buttonModel(),
-        initialize: function (options) {
-            this.listenTo(dispatcher, 'getObject', this.getInventoryObj);
-            this.listenTo(this.model, 'sync', this.init);
+        initialize: function (){
+            this.listenTo(this,'loading', this.loading);
+            this.getData();
             this.render();
+            if(config.isConfigurator){
+                $('.logo').css('display','inline-block');
+                $('.price-button').css('display','inline-block');
+            }
+            console.log(dispatcher);
         },
         render: function () {
             this.$el.html(buttonTemplate);
-            dispatcher.trigger('getObject');
             return this;
         },
-        getInventoryObj : function(){
-            var vin = config.vin,
-                zip = config.zipCode;
-            this.model.fetch({
-                url: this.model.url(vin, zip),
-                dataType: 'json',
-                data: {
-                    access_token: ''
+        loading: function(){
+            console.log('loading');
+        },
+        getData: function(){
+            var data = {
+                vin : config.vin,
+                zip : config.zipCode,
+                api_key: config.apiKey
                 },
-                error: function(err, data){
-                    if(err){
-                        this.$('.price-button').prop('disabled', 'disabled');
+                that = this;
+            dispatcher.trigger('loading');
+            $.ajax({
+                type: 'POST',
+                url: 'http://edmundswidgets-staging.herokuapp.com/api/ppb/inventory', // http://edmundswidgets-staging.herokuapp.com
+                data: data,
+			  	dataType: 'json',
+                success: function(data){
+                    that.init(data);
+                        $('.logo').css('display','inline-block');
+                        $('.price-button').css('display','inline-block');
+                },
+                error: function(err){
+                    var button = $('.price-button');
+                    button.prop('disabled','disabled');
+                    if(config.isConfigurator){
+                        $('.logo').css('display','inline-block');
+                        button.css('display','inline-block');
+
                     }
                 }
             });
             return this;
         },
-        init: function(){
-            if(this.model.toJSON().resultsList[0].guaranteedPrice == 'N/A'){
-                this.$('.price-button').addClass('hidden');
-            }
-            console.log(this.model.toJSON());
+        init: function(data){
+            this.inventoryData = data;
         },
         buttonClick: function(e){
             e.preventDefault();
+            dispatcher.trigger('ppb.button.click', 'Ppb Button');
+            var franchiseId = this.inventoryData.franchiseId,
+                locationId = this.inventoryData.locationId,
+                inventoryId = this.inventoryData.inventoryId,
+                make = this.inventoryData.make,
+                model = this.inventoryData.model,
+                sub = this.inventoryData.sub,
+                year = this.inventoryData.year,
+                apiKey = config.apiKey.substr(-4),
+                guaranteedPrice = this.inventoryData.guaranteedPrice,
+                expireDate = this.inventoryData.gpexperiationDate,
+                $button = $('.price-button'),
+                url = 'http://www.edmunds.com/inventory/lead_form_certificate.html?action=display&make='+ make +'&model='+model+'&sub='+ sub +'&locationId='+ locationId +'&franchiseId='+ franchiseId +'&inventoryId='+ inventoryId +'&year=' + year +'&rf=ppb-' + apiKey + '&gp_lead_form=true';
+            var enWin = window.open(url, "_blank", "toolbar=yes, scrollbars=yes, resizable=yes, top=101, left=528, width=700, height=500");
+            console.log(enWin);
+            expireDate = new Date(expireDate);
+            expireDate = expireDate.toString();
+            expireDate = expireDate.slice(3,15);
+            expireDate = expireDate.replace(/(\w+)\s(\w+)/, "$1 $2,");
 
-            var franchiseId = this.model.toJSON().resultsList[0].franchiseId,
-                locationId = this.model.toJSON().resultsList[0].dealerLocationId,
-                inventoryId = this.model.toJSON().resultsList[0].inventoryId,
-                make = this.model.toJSON().resultsList[0].make,
-                model = this.model.toJSON().resultsList[0].model,
-                sub = this.model.toJSON().resultsList[0].submodel,
-                year = this.model.toJSON().resultsList[0].year,
-                url = 'http://www.edmunds.com/inventory/lead_form_certificate.html?action=display&make='+ make +'&model='+model+'&sub='+ sub +'&locationId='+ locationId +'&franchiseId='+ franchiseId +'&inventoryId='+ inventoryId +'&year=' + year +'&rf=ddp&gp_lead_form=true';
-            window.open(url, "_blank", "toolbar=yes, scrollbars=yes, resizable=yes, top=101, left=528, width=700, height=500");
+            guaranteedPrice = parseInt(guaranteedPrice);
+            guaranteedPrice = guaranteedPrice.toString();
+            if(guaranteedPrice.length > 3){
+                for(var i = 0; i < guaranteedPrice.length; i++){
+                    guaranteedPrice = guaranteedPrice.replace(/(\d)(\d\d\d)(\.|\,|$)/, "$1,$2$3");
+                }
+            }
+            if(guaranteedPrice && guaranteedPrice !== null && guaranteedPrice !== undefined){
+                $button.hide();
+                var template = _.template('' +
+                    '<div class="price-wrap">' +
+                    '<span class="guaranted-price">$<%= guaranteedPrice %></span>' +
+                    '<p class="expire-date">Offer expires <span><%= expireDate %></span></p>' +
+                    '</div>'+'');
+                $('#prise-promise-button').append(template({
+                    'guaranteedPrice' : guaranteedPrice,
+                    'expireDate': expireDate
+                }));
+            }else {
+                $button.prop('disabled','disabled');
+            }
+
         }
 
     });
-//
 });

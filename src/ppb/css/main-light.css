@@ -6,6 +6,7 @@ html {
 }
 body {
   margin: 0;
+  background-color: transparent;
 }
 .edmunds_api,
 .edmunds_rating,
@@ -342,7 +343,7 @@ body {
   font-size: 12px;
   line-height: 1.42857143;
   color: #333333;
-  background-color: #ffffff;
+  /*background-color: #ffffff;*/
 }
 /*.custom-height {*/
   /*height: auto;*/
@@ -5786,6 +5787,18 @@ button.close {
 #prise-promise-button {
     text-align: center;
 }
+#prise-promise-button .guaranted-price {
+    font-size: 36px;
+    font-family: Helvetica;
+    font-weight: bold;
+    color: #58A200;
+}
+#prise-promise-button .expire-date {
+    font-size: 13px;
+    font-family: Helvetica;
+    font-style: normal;
+    color: #999;
+}
 .price-button {
     text-align: center;
     color: #fff;
@@ -5797,21 +5810,24 @@ button.close {
     cursor: pointer;
     padding: 12px 20px;
     font-size: 18px;
-    margin-top: 5px;
+    margin-top: 2px;
 }
 .price-button[disabled] {
     background-color: #dddddd;
 }
-.logo {
-    height: 33px;
-    background-size: contain;
-    display: inline-block;
-    width: 100px;
-    vertical-align: bottom;
-    margin-right: 6px;
-    background-image: url("../img/edmunds-logo.png");
-    background-repeat: no-repeat;
 
+.logo {
+    margin: 0 auto;
+    /*background-size: 100%;*/
+    height: 29px;
+    display: block;
+    /*width: 254px;*/
+    width: 21em;
+    background-image: url("../img/edmunds-pp-color.svg");
+    /* background-image: url("../img/Edmunds-PP-color.png"); */
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 114%;
 }
 .logo img {
     max-width: 100%;
@@ -5835,21 +5851,19 @@ p.prise-promise-text {
     left: -3px;
 }
 
-@media (min-width: 441px) {
+@media (min-width: 450px) {
     .logo {
-        height: 41px;
-        width: 120px;
-        vertical-align: middle;
+        display: inline-block;
+        vertical-align: -10px;
+        /* margin-right: 7px; */
     }
-    p.prise-promise-text {
-        vertical-align: bottom;
-        font-size: 1.6em;
-        margin-bottom: 0;
-    }
-    .red {
-        display: block;
-        text-align: left;
-    }
+}
+
+
+@media (min-width: 474px) {
+    .price-wrap {
+        display: inline-block;
+        vertical-align: -24px;
     }
 }
 @-ms-viewport {
@@ -6059,7 +6073,7 @@ footer .logo {
 }
 
 footer .logo a {
-  background: url(../img/logo.png) no-repeat;
+  background: url('../img/logo.png') no-repeat;
   width: 65px;
   height: 19px;
   margin: 11px 0 0 5px;

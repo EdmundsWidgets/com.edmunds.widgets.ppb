@@ -13,16 +13,21 @@ requirejs.config({
     }
 });
 define('config', function() {
+    var options = window.widgetConfig.options;
+    var isConfigurator = (options.hasOwnProperty('isConfigurator')) ? options.isConfigurator : false;
     return {
-        apiKey:     window.widgetConfig.options.apiKey,
-        vin: window.widgetConfig.options.vin,
-        zipCode: window.widgetConfig.options.zipCode
+        apiKey: options.apiKey,
+        vin: options.vin,
+        zipCode: options.zipCode,
+        isConfigurator: isConfigurator,
+        renderTo: window.widgetConfig.renderTo
     }
 });
 require([
     'app',
-    'bootstrap'
-], function(App) {
+    'bootstrap',
+    'config'
+], function(App ,bootstrap,config) {
     var app = new App();
-    $('#atglancewidget').html(app.el);
+    $('#' + config.renderTo).html(app.el);
 });

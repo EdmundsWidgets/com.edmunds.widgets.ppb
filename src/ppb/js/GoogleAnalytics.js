@@ -20,32 +20,20 @@ define(function() {
     return {
         init: function(debug) {
             _debug = !!debug;
-            ga('create', 'UA-24637375-4', 'auto');
+            ga('create', 'UA-24637375-5', 'auto');
             ga('send', 'pageview');
             return this;
         },
 
         track: function(widget) {
-            widget.on('vehicle.style.select', function(styleId) {
-                _trackEvent('Vehicle Configuration', 'Select a Style', styleId);
-            });
-            widget.on('tab.click', function(tabName) {
-                _trackEvent('Tab', 'Click', tabName);
-            });
-            widget.on('zip.update', function(zipCode) {
-                _trackEvent('Zip', 'Zip Code is updated', zipCode);
-            });
-            widget.on('photos.type.click', function(photosType) {
-                _trackEvent('Photos', 'Photos type is changed', photosType);
-            });
-            widget.on('next.review.click', function() {
-                _trackEvent('Reviews', 'Click', 'Next review clicked');
-            });
-            widget.on('prev.review.click', function() {
-                _trackEvent('Reviews', 'Click', 'Previous review clicked');
-            });
-            widget.on('list.review.click', function() {
-                _trackEvent('Reviews', 'Click', 'Full list reviews clicked');
+            //widget.on('tab.click', function(tabName) {
+            //    _trackEvent('Tab', 'Click', tabName);
+            //});
+            //widget.on('zip.update', function(zipCode) {
+            //    _trackEvent('Zip', 'Zip Code is updated', zipCode);
+            //});
+            widget.on('ppb.button.click', function() {
+                _trackEvent('Ppb', 'Click', 'Button clicked');
             });
         }
 

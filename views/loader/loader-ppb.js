@@ -50,37 +50,37 @@ function WidgetFrame(renderTo, attributes, includes) {
          * @private _targetElement
          * @type {HTMLElement}
          */
-            _targetElement = document.getElementById(renderTo),
+        _targetElement = document.getElementById(renderTo),
 
         /**
          * @private _iframe
          * @type {HTMLIFrameElement}
          */
-            _iframe,
+        _iframe,
 
         /**
          * @private _iframeDocument
          * @type {HTMLDocument}
          */
-            _iframeDocument,
+        _iframeDocument,
 
         /**
          * @private _iframeDocumentHead
          * @type {HTMLHeadElement}
          */
-            _iframeDocumentHead,
+        _iframeDocumentHead,
 
         /**
          * @private _iframeDocumentBody
          * @type {HTMLBodyElement}
          */
-            _iframeDocumentBody,
+        _iframeDocumentBody,
 
         /**
          * @private _iframeWindow
          * @type {Window}
          */
-            _iframeWindow;
+        _iframeWindow;
 
     if (!_targetElement) {
         throw new Error('Element with id "' + renderTo + '" was not found');
@@ -90,6 +90,8 @@ function WidgetFrame(renderTo, attributes, includes) {
     attributes.border = 0;
     attributes.frameBorder = 0;
     attributes.scrolling = 'no';
+    attributes.id = 'iframe-ppb';
+    attributes.name = 'ppb-fr';
     _iframe = createElement('iframe', attributes);
     _targetElement.appendChild(_iframe);
     _iframeDocument = _iframe.contentDocument || _iframe.contentWindow.document;
@@ -163,19 +165,18 @@ function getThemeStyleUrl(options) {
 }
 
 function getAdditionalStyleUrl(widget, options) {
-    console.log(widget, options);
-//    if (widget === 'nvc') {
-//        return '/nvc/api/less?' + [
-//                'style[theme]=' + (options.theme || 'simple'),
-//                'style[colorScheme]=' + (options.colorScheme || options.color || 'light'),
-//                'variables[width]=' + (options.width + 'px'),
-//                'variables[height]=' + (options.height + 'px'),
-//                'variables[borderWidth]=' + (options.border || '1px'),
-//                'variables[borderRadius]=' + (options.borderRadius || '5px')
-//        ].join('&');
-//    } else {
+    if (widget === 'nvc') {
+        return '/nvc/api/less?' + [
+                'style[theme]=' + (options.theme || 'simple'),
+                'style[colorScheme]=' + (options.colorScheme || options.color || 'light'),
+                'variables[width]=' + (options.width + 'px'),
+                'variables[height]=' + (options.height + 'px'),
+                'variables[borderWidth]=' + (options.border || '1px'),
+                'variables[borderRadius]=' + (options.borderRadius || '5px')
+            ].join('&');
+    } else {
         return '/ppb/css/main' + '-' + options.color + '.css';
-//    }
+    }
 }
 
 function map(array) {

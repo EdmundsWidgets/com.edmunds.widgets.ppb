@@ -1,5 +1,4 @@
 exports.configurator = function(req, res) {
-    console.log(req);
     res.render('ppb/configure', {
         title: 'Edmunds Widgets - Edmunds At A Glance Widget',
         url: req.protocol + '://' + req.headers.host,
@@ -14,4 +13,7 @@ exports.about = function(req, res) {
         debug: req.query.debug === 'true',
         portal: req.query.portal === 'true'
     });
+};
+exports.token = function(req,res){
+
 };
