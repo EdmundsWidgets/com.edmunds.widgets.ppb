@@ -12,9 +12,9 @@ module.exports = function(grunt) {
 				'<%= nodeunit.tests %>'
 			]
 		},
-		//nodeunit: {
-		//	tests: ['tests/nodeunit/*_test.js']
-		//},
+		nodeunit: {
+			tests: ['tests/casper/*-test.js']
+		},
 		connect: {
 			www: {
 				options: {
@@ -47,6 +47,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-nodeunit');
 	grunt.loadNpmTasks('grunt-ghost');
 
-	grunt.registerTask('test', ['jshint', 'nodeunit', 'connect', 'ghost']);
+	grunt.registerTask('test', ['connect', 'ghost']);
 	grunt.registerTask('default', ['connect']);
 };
