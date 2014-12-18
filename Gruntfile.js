@@ -15,15 +15,26 @@ module.exports = function(grunt) {
 		nodeunit: {
 			tests: ['tests/casper/*-test.js']
 		},
-		connect: {
-			www: {
-				options: {
-					// keepalive: true,
-					base: 'source',
-					port: 4545
-				}
-			}
-		},
+        express: {
+            options: {
+                port: 3000,
+                debug: true
+            },
+            server: {
+                options: {
+                    script: 'app.js'
+                }
+            }
+        },
+//		connect: {
+//			www: {
+//				options: {
+////					keepalive: true,
+////					base: '',
+//					port: 3000
+//				}
+//			}
+//		},
 		ghost: {
 			test: {
 				files: [{
@@ -33,7 +44,7 @@ module.exports = function(grunt) {
 			options: {
 				args: {
 					baseUrl: 'http://localhost:' +
-						'<%= connect.www.options.port %>/'
+						'<%= express.options.port %>/' + 'ppb/configure'
 				},
 				direct: false,
 				logLevel: 'error',
@@ -46,7 +57,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-nodeunit');
 	grunt.loadNpmTasks('grunt-ghost');
+    grunt.loadNpmTasks('grunt-express-server');
 
-	grunt.registerTask('test', ['connect', 'ghost']);
+	grunt.registerTask('test', ['express', 'ghost']);
 	grunt.registerTask('default', ['connect']);
 };
