@@ -21,7 +21,5 @@ deploy:
   on:
     repo: EdmundsWidgets/com.edmunds.widgets.ppb
     tags: true
-    all_branches: true
-  branches:
-    only:
-      - master
+    branch: master
+        appveyor_repo_tag: true
