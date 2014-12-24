@@ -4,7 +4,6 @@
 var env = process.env;
 
 module.exports = {
-    // mashery settings
     MASHERY_API_KEY      :              env.MASHERY_API_KEY,
     MASHERY_SHARED_SECRET:              env.MASHERY_SHARED_SECRET
 };
