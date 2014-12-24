@@ -17,5 +17,8 @@ deploy:
   api_key:
     secure: YTI+cDX2CrjS+EyKpWKdr7LqPY2W0Gv9MqohT7AECsJrVaoW9JWNiDJcdaJJ24hKiBo2G5/3JnhgRhYJoMZcVUJ2hLj9xC+B9V9ixzd9yKZ1M6AAdAQcH4x5z2knexm1dRCLClj2vApSpm+jAphdHgwGaaRyXfL+6cXsEMsfM1E=
   file: edmunds-prise-promise-button-widget
+  skip_cleanup: true
   on:
     repo: EdmundsWidgets/com.edmunds.widgets.ppb
+    tags: true
+    all_branches: true
