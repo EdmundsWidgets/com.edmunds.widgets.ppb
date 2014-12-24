@@ -1,14 +1,21 @@
 language: node_js
 node_js:
-  - '0.10'
+- '0.10'
 before_install:
-  - npm install -g grunt-cli
-  - npm install -g bower
-  - bower install
-  - git clone git://github.com/n1k0/casperjs.git ~/casperjs
-  - cd ~/casperjs
-  - git checkout tags/1.0.2
-  - export PATH=$PATH:`pwd`/bin
-  - cd -
+- npm install -g grunt-cli
+- npm install -g bower
+- bower install
+- git clone git://github.com/n1k0/casperjs.git ~/casperjs
+- cd ~/casperjs
+- git checkout tags/1.0.2
+- export PATH=$PATH:`pwd`/bin
+- cd -
 notifications:
   email: false
+deploy:
+  provider: releases
+  api_key:
+    secure: YTI+cDX2CrjS+EyKpWKdr7LqPY2W0Gv9MqohT7AECsJrVaoW9JWNiDJcdaJJ24hKiBo2G5/3JnhgRhYJoMZcVUJ2hLj9xC+B9V9ixzd9yKZ1M6AAdAQcH4x5z2knexm1dRCLClj2vApSpm+jAphdHgwGaaRyXfL+6cXsEMsfM1E=
+  file: edmunds-prise-promise-button-widget
+  on:
+    repo: EdmundsWidgets/com.edmunds.widgets.ppb
