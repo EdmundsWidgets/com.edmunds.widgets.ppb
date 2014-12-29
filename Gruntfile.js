@@ -26,15 +26,6 @@ module.exports = function(grunt) {
                 }
             }
         },
-//		connect: {
-//			www: {
-//				options: {
-////					keepalive: true,
-////					base: '',
-//					port: 3000
-//				}
-//			}
-//		},
 		ghost: {
 			test: {
 				files: [{
@@ -51,14 +42,28 @@ module.exports = function(grunt) {
 				printCommand: false,
 				printFilePaths: true
 			}
-		}
+		},
+        compress: {
+            main: {
+                options: {
+                    archive : "edmunds.widgets.ppb.zip.zip",
+                    mode: 'zip'
+                },
+                files: [
+                    {
+                        expand: true,
+                        src: ['**']
+                    }
+                ]
+            }
+        }
 	});
 	grunt.loadNpmTasks('grunt-contrib-connect');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-nodeunit');
 	grunt.loadNpmTasks('grunt-ghost');
     grunt.loadNpmTasks('grunt-express-server');
-
-	grunt.registerTask('test', ['express', 'ghost']);
+    grunt.loadNpmTasks('grunt-contrib-compress');
+	grunt.registerTask('test', ['express', 'ghost', 'compress']);
 	grunt.registerTask('default', ['connect']);
 };
