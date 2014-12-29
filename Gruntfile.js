@@ -46,7 +46,7 @@ module.exports = function(grunt) {
         compress: {
             main: {
                 options: {
-                    archive : "edmunds.widgets.ppb.zip.zip",
+                    archive : "edmunds.widgets.ppb.zip",
                     mode: 'zip'
                 },
                 files: [
